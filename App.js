@@ -8,69 +8,60 @@ import { useEffect } from 'react';
 import SortService from './src/services/SortService';
 import {SORT} from './src/constants/sort';
 import { FILTER } from './src/constants/filter';
+import useThemeStore from './src/repository/store';
 
-// Main app entry point that loads custom fonts before rendering the navigator.
+// Main app entry point. Loads fonts first, then renders the app navigator.
 export default function App() {
+  const initializeTheme = useThemeStore((state) => state.initializeTheme);
 
+  // Ensure there is always a default filter stored before the app starts.
+  useEffect(() => {
+    const getFilter = async () => {
+      const filter = await FilterService.getFilter();
 
-useEffect(()=>{
-  const getFilter= async()=>{
-
-     const filter = await FilterService.getFilter();
-
-     if (filter === null) {
+      if (filter === null) {
         await FilterService.setFilter(FILTER.ALL);
-     }
+      }
+    };
 
+    getFilter();
+  }, []);
 
-  }
+  // Ensure there is always a default sort order stored before the app starts.
+  useEffect(() => {
+    const getSort = async () => {
+      const sort = await SortService.getSort();
 
+      if (sort === null) {
+        await SortService.setSort(SORT.OLDEST);
+      }
+    };
 
+    getSort();
+  }, []);
 
+  // Restore the saved theme mode when the app boots.
+  useEffect(() => {
+    initializeTheme();
+  }, [initializeTheme]);
 
-  getFilter();
-},[])
-
-
-useEffect(()=>{
-
-  const getSort = async()=>{
-
-    const sort = await SortService.getSort();
-
-    
-    if (sort === null){
-      await SortService.setSort(SORT.OLDEST)
-    }
-
-  }
-
-  getSort()//
-},[])
-
-
-
-const [fontsLoaded, fontError] = useFonts({
+  // Load custom fonts before rendering the navigator.
+  const [fontsLoaded, fontError] = useFonts({
     Poppins_400Regular,
     Poppins_500Medium,
     Poppins_600SemiBold,
-
     Inter_400Regular,
     Inter_500Medium,
-    Inter_600SemiBold
+    Inter_600SemiBold,
+  });
 
-  })
-
-
-if (!fontsLoaded) { 
-
-  return null;
-}
-
-
+  if (!fontsLoaded) {
+    // Show nothing while fonts are loading to avoid layout flicker.
+    return null;
+  }
 
   return (
-      <AppNavigator />
+    <AppNavigator />
   );
 }
 

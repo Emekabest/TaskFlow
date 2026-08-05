@@ -51,7 +51,7 @@ const DrawerNavigation = ({ visible, onClose }) => {
             <Text style={[styles.menuText, { color: theme.text }]}>Dark mode</Text>
             <Switch
               value={isDark}
-              onValueChange={toggleTheme}
+              onValueChange={(value) => toggleTheme(value)}
               trackColor={{ false: "#d1d5db", true: theme.primary }}
               thumbColor="#fff"
             />
