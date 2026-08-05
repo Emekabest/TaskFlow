@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { Dimensions, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import Constants from 'expo-constants';
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
@@ -11,6 +11,7 @@ import TaskService from "../../services/TaskService";
 import useThemeStore from "../../repository/store";
 import DarkTheme from "../../theme/darkTheme";
 import LightTheme from "../../theme/lightTheme";
+import { Ionicons } from "@expo/vector-icons";
 
 
 const statusBarHeight = Constants.statusBarHeight;
@@ -162,9 +163,12 @@ const AddTaskScreen = () => {
                     ) : null}
                 </View>
 
-                <TouchableOpacity onPress={handleSaveTask} style={[styles.saveButton, { backgroundColor: theme.primary }]} activeOpacity={1}>
-                    <Text style={styles.saveButtonText}>Save</Text>
-                </TouchableOpacity>
+                
+                    <TouchableOpacity onPress={handleSaveTask} style={[styles.saveButton, { backgroundColor: theme.primary }]} activeOpacity={1}>
+                        <Ionicons name="checkmark-circle-outline" color={isDark ? "#fff" : "#fff"} size={24} />
+                        <Text style={styles.saveButtonText}>Save</Text>
+                    </TouchableOpacity>
+               
             </View>
         </View>
     );
@@ -199,6 +203,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingTop: 24,
         paddingBottom: 24,
+        
     },
 
     inputCard: {
@@ -261,17 +266,24 @@ const styles = StyleSheet.create({
     },
 
     saveButton: {
+        width:200,
         marginTop: "auto",
         borderRadius: 12,
         paddingVertical: 14,
         alignItems: "center",
         justifyContent: "center",
+        position:"absolute",
+        bottom:15,
+        display:"flex",
+        flexDirection:"row",
+        left: (Dimensions.get("window").width - 200) / 2
     },
 
     saveButtonText: {
         fontSize: 16,
         fontFamily: Fonts.BodySemiBold,
         color: "#fff",
+        paddingLeft:5
     },
 });
 

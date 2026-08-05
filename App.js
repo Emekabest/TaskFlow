@@ -39,7 +39,6 @@ useEffect(()=>{
     const sort = await SortService.getSort();
 
     
-
     if (sort === null){
       await SortService.setSort(SORT.OLDEST)
     }

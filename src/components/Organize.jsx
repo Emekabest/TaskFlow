@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Fonts from "../constants/font";
 import useThemeStore from "../repository/store";
 import DarkTheme from "../theme/darkTheme";
@@ -18,9 +18,26 @@ const Organize = ({fetchTasks})=>{
   const theme = isDark ? DarkTheme : LightTheme;
   const [isSortVisible, setIsSortVisible] = useState(false);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState("All");
-  const [selectedSort, setSelectedSort] = useState("Due date");
+  const [selectedFilter, setSelectedFilter] = useState("");
+  const [selectedSort, setSelectedSort] = useState("");
 
+
+
+
+
+  useEffect(()=>{
+    const fetch = async()=>{
+       const filterType = await FilterService.getFilter();
+       const sortBy = await SortService.getSort();
+
+
+       setSelectedFilter(capitalize(filterType));
+       setSelectedSort(capitalize(sortBy));
+    }
+
+
+    fetch();
+  },[])
 
   // Opens the sort-by sheet so the user can choose a sorting option.
   const handleSortTask = async (sortBy) => {
@@ -99,6 +116,7 @@ const handleFilterTask = async(filter)=>{
                 <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setIsSortVisible(false)}>
                     <View style={[styles.sheet, { backgroundColor: theme.background }]}> 
                         <View style={styles.sheetHeader}>
+                            <Ionicons name="swap-vertical" style={{paddingTop:3}} size={20} color={theme.icon} />
                             <Text style={[styles.sheetTitle, { color: theme.text }]}>Sort By</Text>
                         </View>
 
@@ -140,6 +158,7 @@ const handleFilterTask = async(filter)=>{
                 <TouchableOpacity activeOpacity={1} style={styles.modalOverlay} onPress={() => setIsFilterVisible(false)}>
                     <View style={[styles.sheet, { backgroundColor: theme.background }]}> 
                         <View style={styles.sheetHeader}>
+                            <Ionicons name="filter-outline" style={{paddingTop:3}} size={20} color={theme.icon} />
                             <Text style={[styles.sheetTitle, { color: theme.text }]}>Filter</Text>
                         </View>
 
@@ -227,10 +246,16 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "rgba(0,0,0,0.08)",
         marginBottom: 8,
+        display:"flex",
+        flexDirection:"row"
     },
     sheetTitle: {
         fontSize: 16,
         fontFamily: Fonts.HeaderSemiBold,
+        marginLeft:5,
+        // backgroundColor:"red",
+
+        // marginBottom:5
     },
     optionRow: {
         display:"flex",
