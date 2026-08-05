@@ -1,0 +1,127 @@
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import Checkbox from 'expo-checkbox';
+import { useState } from "react";
+import Fonts from "../../../constants/font";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import TaskService from "../../../services/TaskService";
+import Alert from "../../../components/Alert";
+import useThemeStore from "../../../repository/store";
+import DarkTheme from "../../../theme/darkTheme";
+import LightTheme from "../../../theme/lightTheme";
+
+const TaskListCard = ({ id, title, desc, isCompleted, fetchTasks }) => {
+  const [isChecked, setChecked] = useState(isCompleted);
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const isDark = useThemeStore((state) => state.isDark);
+  const theme = isDark ? DarkTheme : LightTheme;
+  const isDescription = desc !== "";
+
+  const handleCheck = async (value) => {
+    setChecked(value);
+    await TaskService.toggleTask(id);
+  };
+
+  const handleTaskDelete = async () => {
+    await TaskService.deleteTask(id);
+    setIsAlertVisible(false);
+    fetchTasks();
+  };
+
+  return (
+    <TouchableOpacity
+      activeOpacity={0.6}
+      style={[
+        styles.card,
+        { maxHeight: isDescription ? 170 : 70, minHeight: 70 },
+        { backgroundColor: theme.button },
+      ]}
+    >
+      <View style={styles.left}>
+        <Checkbox
+          value={isChecked}
+          onValueChange={handleCheck}
+          color={isChecked ? theme.primary : theme.checkbox}
+        />
+      </View>
+
+      <View style={[styles.center, { justifyContent: isDescription ? "flex-start" : "center" }]}> 
+        <View style={styles.textBlock}>
+          <Text style={[styles.taskTitle, { color: theme.text }]}>{title}</Text>
+          {isDescription ? (
+            <View style={styles.taskDescriptionCont}>
+              <Text style={[styles.taskDescription, { color: theme.textSecondary }]}>{desc}</Text>
+            </View>
+          ) : null}
+          <View style={styles.dueDateContainer}>
+            <Text style={[styles.dueDateText, { color: theme.primary }]}>Mon, Aug, 31, 12:00pm</Text>
+          </View>
+        </View>
+      </View>
+
+      <TouchableOpacity onPress={() => setIsAlertVisible(true)} activeOpacity={1} style={styles.right}>
+        <FontAwesomeIcon icon={faTrash} size={19} color={theme.danger} />
+      </TouchableOpacity>
+
+      <Alert
+        visible={isAlertVisible}
+        question={`Delete "${title}"?`}
+        onCancel={() => setIsAlertVisible(false)}
+        onConfirm={handleTaskDelete}
+        confirmText="Delete"
+      />
+    </TouchableOpacity>
+  );
+};
+
+const styles = StyleSheet.create({
+  card: {
+    width: "100%",
+    borderRadius: 10,
+    flexDirection: "row",
+    marginBottom: 10,
+  },
+  left: {
+    height: "100%",
+    width: "10%",
+    justifyContent: "center",
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    paddingLeft: 8,
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    paddingVertical: 8,
+  },
+  textBlock: {
+    paddingRight: 6,
+  },
+  taskDescriptionCont: {
+    marginTop: 4,
+  },
+  dueDateContainer: {
+    marginTop: 8,
+  },
+  dueDateText: {
+    fontSize: 12,
+    fontFamily: Fonts.BodyMedium,
+  },
+  right: {
+    width: "10%",
+    alignItems: "center",
+    justifyContent: "center",
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  taskTitle: {
+    fontSize: 17,
+    fontFamily: Fonts.BodySemiBold,
+  },
+  taskDescription: {
+    fontSize: 14,
+    fontFamily: Fonts.BodyRegular,
+  },
+});
+
+export default TaskListCard;
