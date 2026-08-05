@@ -48,7 +48,7 @@ class OpenAIService{
     }
 
 
-    // Converts a transcript into a list of individual task strings.
+    // Converts a transcript into a list of individual task object.
     async splitTasks(transcript){
 
         try{
