@@ -42,6 +42,7 @@ class OpenAIService{
         catch(error){
             console.log("Error Transcribing Audio::"+error)
 
+            return [];
         }
 
 
