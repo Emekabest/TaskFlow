@@ -14,7 +14,7 @@ import useThemeStore from './src/repository/store';
 export default function App() {
   const initializeTheme = useThemeStore((state) => state.initializeTheme);
 
-  // Ensure there is always a default filter stored before the app starts.
+  // Ensure there is always a default filter stored before the app starts...
   useEffect(() => {
     const getFilter = async () => {
       const filter = await FilterService.getFilter();
